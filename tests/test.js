@@ -3,7 +3,16 @@ const XLSX = require('xlsx')
 const { By, Key, Builder } = require("selenium-webdriver");
 require("chromedriver");
 
-const idiomas = ['en']
+const idiomas = ['de','br','ca','cs','zh',
+                 'ko','hr','da','sk','es',
+                 'eu','fi','fr','gl','el',
+                 'he','hi','hu','en','ga',
+                 'is','it','ja','la','nl',
+                 'no','fa','pl','pt','ro',
+                 'ru','scat','sr','sv','th',
+                 'tr']
+
+
 async function run_scrapper() {
 
         //To wait for browser to build and launch properly
@@ -18,8 +27,14 @@ async function run_scrapper() {
                 await driver.get(`https://ultrastar-es.org/es/canciones?idioma=${idioma}`);
 
                 //Get length of list of songs
-                let cantidad = await driver.findElement(By.css("a[title*='Ir a la última página de resultados']")).getAttribute('href') + '';
-                cantidad = cantidad.replace(/\D/g, "");
+                let cantidad
+                try {
+                        cantidad = await driver.findElement(By.css("a[title*='Ir a la última página de resultados']")).getAttribute('href') + '';
+                        cantidad = cantidad.replace(/\D/g, "");    
+                } catch (error) {
+                        cantidad = 1;
+                }
+                
                 
 
                 //Iterate over actual page and extract info
