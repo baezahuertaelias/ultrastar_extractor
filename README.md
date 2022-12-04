@@ -14,5 +14,5 @@ En el archivo tests/index.js hay una variable llamada idiomas, dentro de ese arr
 ## Ejecutar
 ```sh
 npm i
-node tests/index.js
+npm run dev
 ```
