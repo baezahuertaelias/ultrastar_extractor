@@ -6,7 +6,7 @@ const moment = require("moment");
 function printProgress(value, total) {
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
-  process.stdout.write(`Processing page: ${value} of ${total} [${parseFloat((value*100)/total).toFixed(2)}]`)
+  process.stdout.write(`Processing page: ${value} of ${total} [${parseFloat((value*100)/total).toFixed(2)}%]`)
   
 }
 
@@ -148,10 +148,7 @@ const createJSON = async (finalResult, language) => {
 
 const createCSV = async (finalResult, language) => {
   const header = "ARTISTA,CANCION,URL,IDIOMA,ANO,RATING,FECHA\n";
-  finalResult = finalResult.map(
-    (item) =>
-      `${item.artist},${item.song},https://ultrastar-es.org/es/canciones/descargar/torrent/${item.dataID},${item.idioma},${item.anio},${item.rating},${item.date}`
-  );
+  finalResult = finalResult.map(item => `${removeAccents(item.artist)},${removeAccents(item.song)},https://ultrastar-es.org/es/canciones/descargar/torrent/${item.dataID},${item.idioma},${item.anio},${item.rating},${item.date}`);
   fs.writeFileSync(
     `${language}.csv`,
     header + finalResult.join("\n"),
@@ -189,5 +186,38 @@ const main = async () => {
 
   await createCSV(finalResult, 'all');
 };
+
+const removeAccents = (text) => {
+  const sustitutions = {
+    àáâãäå: "a",
+    ÀÁÂÃÄÅ: "A",
+    èéêë: "e",
+    ÈÉÊË: "E",
+    ìíîï: "i",
+    ÌÍÎÏ: "I",
+    òóôõö: "o",
+    ÒÓÔÕÖ: "O",
+    ùúûü: "u",
+    ÙÚÛÜ: "U",
+    ýÿ: "y",
+    ÝŸ: "Y",
+    ß: "ss",
+    ñ: "n",
+    Ñ: "N"
+  };
+  // Devuelve un valor si 'letter' esta incluido en la clave
+  function getLetterReplacement(letter, replacements) {
+    const findKey = Object.keys(replacements).reduce(
+      (origin, item, index) => (item.includes(letter) ? item : origin),
+      false
+    );
+    return findKey !== false ? replacements[findKey] : letter;
+  }
+  // Recorre letra por letra en busca de una sustitución
+  return text
+    .split("")
+    .map((letter) => getLetterReplacement(letter, sustitutions))
+    .join("");
+}
 
 main();
