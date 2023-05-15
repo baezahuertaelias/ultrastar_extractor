@@ -12,7 +12,7 @@ function printProgress(value, total) {
 
 const getAllTotalPages = async () => {
   const { data } = await axios.get(
-    `https://ultrastar-es.org/es/canciones?pagina=1&orden=1`
+    `https://ultrastar-es.org/en/canciones?pagina=1&orden=1`
   );
 
   const $ = cheerio.load(data);
@@ -22,7 +22,7 @@ const getAllTotalPages = async () => {
       .eq(5)
       .children("a")
       .attr("href")
-      .replace("/es/canciones?pagina=", "")
+      .replace("/en/canciones?pagina=", "")
       .replace("&idioma=es", "")
   );
 
@@ -74,7 +74,7 @@ const getAllDataSongs = async (page) => {
 
 const getTotalPages = async (language) => {
   const { data } = await axios.get(
-    `https://ultrastar-es.org/es/canciones?idioma=${language}`
+    `https://ultrastar-es.org/en/canciones?idioma=${language}`
   );
 
   const $ = cheerio.load(data);
@@ -84,7 +84,7 @@ const getTotalPages = async (language) => {
       .eq(5)
       .children("a")
       .attr("href")
-      .replace("/es/canciones?pagina=", "")
+      .replace("/en/canciones?pagina=", "")
       .replace("&idioma=es", "")
   );
 
@@ -148,7 +148,7 @@ const createJSON = async (finalResult, language) => {
 
 const createCSV = async (finalResult, language) => {
   const header = "ARTISTA,CANCION,URL,IDIOMA,ANO,RATING,FECHA\n";
-  finalResult = finalResult.map(item => `${removeAccents(item.artist)},${removeAccents(item.song)},https://ultrastar-es.org/es/canciones/descargar/torrent/${item.dataID},${item.idioma},${item.anio},${item.rating},${item.date}`);
+  finalResult = finalResult.map(item => `${removeAccents(item.artist)},${removeAccents(item.song)},https://ultrastar-es.org/en/canciones/descargar/torrent/${item.dataID},${item.idioma},${item.anio},${item.rating},${item.date}`);
   fs.writeFileSync(
     `${language}.csv`,
     header + finalResult.join("\n"),
